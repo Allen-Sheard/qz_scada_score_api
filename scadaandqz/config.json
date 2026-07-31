@@ -1,0 +1,51 @@
+{
+
+    "table_model_paths": {
+        "TextRecModelpath": "/workspace/scadaandqz/models/rec/PP-OCRv5_mobile_rec_infer",
+        "TextDetModelpath": "/workspace/scadaandqz/models/det/PP-OCRv5_server_det_infer",
+        "tabelmodelpath": "/workspace/scadaandqz/models/tabledet.pt",
+        "wzqymodelpath": "/workspace/scadaandqz/models/det_num_sl.pt",
+        "save_image_path":"/workspace/jpg/qz",
+        "UDPSender":{
+        "target_ip":"auto-check",
+        "target_port":10187
+        }
+    },
+    "scada_model_paths":
+    {
+        "sc": {
+            "model_path": "/workspace/scadaandqz/models/cls_sc.pt",
+            "classesname": ["0", "1"]
+        },
+        "kg": {
+            "model_path": "/workspace/scadaandqz/models/cls_kg.pt",
+            "classesname": ["0", "1"]
+        },
+        "gzp": {
+            "model_path": "",
+            "classesname": []
+        },
+        "gzp_l": {
+            "model_path": "",
+            "classesname": []
+        },
+        "dz": {
+            "model_path": "/workspace/scadaandqz/models/cls_zd.pt",
+            "classesname": ["0", "1"]
+        },
+        "jddz": {
+            "model_path": "/workspace/scadaandqz/models/cls_jdzd.pt",
+            "classesname": ["0", "1"]
+        },
+        "dtext": {
+            "model_path": "/workspace/scadaandqz/models/num.pt",
+            "classesname": []
+        },
+        "save_image_path":"/workspace/jpg/scada",
+        "UDPSender":{
+        "target_ip":"auto-check",
+        "target_port":10187
+        }
+        
+  }
+}
