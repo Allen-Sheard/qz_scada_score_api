@@ -1,0 +1,81 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [main, master]
+    # 也可以只在打了标签时触发，例如 v1.0.0
+    tags:
+      - "v*"
+  workflow_dispatch:
+    # 支持手动触发，可输入参数
+    inputs:
+      python_version:
+        description: "Python 版本"
+        required: true
+        default: "3.10"
+      artifact_name:
+        description: "Artifact 名称"
+        required: true
+        default: "api_server_windows"
+
+jobs:
+  build-windows-exe:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ github.event.inputs.python_version || '3.10' }}
+          cache: "pip"
+          cache-dependency-path: |
+            requirements-windows.txt
+
+      - name: Install dependencies (Windows CPU)
+        run: |
+          python -m pip install --upgrade pip
+          if (Test-Path "requirements-windows.txt") {
+            pip install -r requirements-windows.txt
+          } elseif (Test-Path "requirements.txt") {
+            Write-Host "警告：未找到 requirements-windows.txt，回退到 requirements.txt"
+            pip install -r requirements.txt
+          } else {
+            Write-Host "错误：未找到任何 requirements 文件"
+            exit 1
+          }
+
+      - name: Verify model files exist
+        run: |
+          if (-Not (Test-Path "scadaandqz/models")) {
+            Write-Host "错误：scadaandqz/models/ 目录不存在，无法打包模型"
+            exit 1
+          }
+          if (-Not (Test-Path "scadaandqz/config.json")) {
+            Write-Host "错误：scadaandqz/config.json 不存在"
+            exit 1
+          }
+          Write-Host "模型目录和配置文件检查通过"
+
+      - name: Build exe with PyInstaller
+        run: pyinstaller windows_build/api_server.spec
+
+      - name: Inspect build output
+        run: |
+          if (Test-Path "dist/api_server/api_server.exe") {
+            Write-Host "✅ api_server.exe 生成成功"
+            Get-ChildItem "dist/api_server" | Select-Object Name, Length
+          } else {
+            Write-Host "❌ 未找到 api_server.exe"
+            exit 1
+          }
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.inputs.artifact_name || 'api_server_windows' }}
+          path: dist/api_server/
+          retention-days: 7
+          if-no-files-found: error
