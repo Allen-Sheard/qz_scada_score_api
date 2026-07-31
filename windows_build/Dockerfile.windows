@@ -1,0 +1,42 @@
+# 基于 Windows 容器打包 api_server 为 exe
+# 注意：此 Dockerfile 必须在 Windows 宿主机 + Windows 容器模式下构建
+#
+# 构建命令（在项目根目录执行）：
+#   docker build -f windows_build/Dockerfile.windows -t qz-scada-api-builder .
+#
+# 运行容器提取产物：
+#   docker run --rm -v %cd%\dist_output:C:\app\dist_output qz-scada-api-builder
+#
+# 提取后产物位于：
+#   .\dist_output\api_server\
+
+FROM mcr.microsoft.com/windows/servercore:ltsc2022
+
+# 安装 Python 3.10
+ADD https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe C:\python_installer.exe
+RUN C:\python_installer.exe /quiet InstallAllUsers=1 PrependPath=1 TargetDir=C:\Python310 && \
+    del C:\python_installer.exe
+
+# 升级 pip
+RUN python -m pip install --upgrade pip
+
+# 设置工作目录
+WORKDIR C:\app
+
+# 复制项目代码
+COPY . C:\app
+
+# 安装项目依赖
+RUN if exist requirements.txt (pip install -r requirements.txt) else (echo warning: requirements.txt not found)
+
+# 安装 PyInstaller
+RUN pip install pyinstaller
+
+# 执行打包
+RUN pyinstaller windows_build\api_server.spec
+
+# 复制模型配置文件
+RUN if exist C:\app\scadaandqz\config.json (copy /y C:\app\scadaandqz\config.json C:\app\dist\api_server\scadaandqz\)
+
+# 容器启动时将产物复制到挂载目录
+CMD xcopy /s /e /i /y C:\app\dist\api_server C:\app\dist_output\api_server && echo done
