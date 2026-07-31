@@ -7,5 +7,4 @@ api filter=lfs diff=lfs merge=lfs -text
 api_server.py filter=lfs diff=lfs merge=lfs -text
 api_server_async.py filter=lfs diff=lfs merge=lfs -text
 common filter=lfs diff=lfs merge=lfs -text
-requirements-windows.txt filter=lfs diff=lfs merge=lfs -text
 windows_build filter=lfs diff=lfs merge=lfs -text
