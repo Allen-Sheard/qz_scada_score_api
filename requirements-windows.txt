@@ -1,0 +1,34 @@
+# Windows 打包专用依赖（CPU 版本，避免 CUDA 依赖问题）
+# 使用方式：
+#   pip install -r requirements-windows.txt
+#   pip install pyinstaller
+#   pyinstaller windows_build/api_server.spec
+
+Flask
+Pillow
+PyYAML
+astor
+decorator
+gast
+matplotlib
+numpy
+opencv-contrib-python==4.7.0.72
+opencv-python==4.7.0.72
+opt_einsum
+paddleocr
+paddlepaddle==3.0.0
+pandas
+protobuf
+psutil
+pyclipper
+requests
+scipy
+shapely
+six
+torch==2.5.1
+torchvision==0.20.1
+tqdm
+ultralytics
+
+# 打包工具
+pyinstaller>=6.0
